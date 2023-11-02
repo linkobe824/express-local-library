@@ -20,7 +20,6 @@ main().catch((err) => console.log(err))
 
 async function main() {
   await mongoose.connect(mongoDB)
-  console.log('DB connected')
 }
 
 // view engine setup
