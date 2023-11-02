@@ -11,9 +11,7 @@ const book_instance_controller = require('../controller/bookinstanceController')
 
 // GET catalog home page
 // router.get('/', book_controller.index)
-router.get('/', (req, res, next) => {
-  res.render('layout')
-})
+router.get('/', book_controller.index)
 
 // Get request for creating a Book. NOTA debe estar antes que rutas
 // que muestren un Book (usan id)
