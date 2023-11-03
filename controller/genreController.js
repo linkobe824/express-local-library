@@ -42,9 +42,12 @@ exports.genre_create_get = (req, res, next) => {
 // array de middlewares
 exports.genre_create_post = [
   // valida y sanitiza el campo "name"
-  body('name', 'Genre name must containt at least 3 charactesr')
+  body('name')
     .trim()
+    .notEmpty()
+    .withMessage('Genre name must be specified.')
     .isLength({ min: 3 })
+    .withMessage('Genre name must be at least 3 characters long.')
     .escape(),
 
   // procesa peticion despues de la validacion y sanitizacion
