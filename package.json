@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "devstart": "nodemon ./bin/www",
+    "devstart": "nodemon ./bin/www -watch",
     "serverstart": "DEBUG=local-library-express:* npm run devstart"
   },
   "dependencies": {

@@ -1,5 +1,6 @@
 const Genre = require('../models/genre')
 const Book = require('../models/book')
+
 const asyncHandler = require('express-async-handler')
 const { body, validationResult } = require('express-validator')
 
@@ -47,7 +48,7 @@ exports.genre_create_post = [
     .notEmpty()
     .withMessage('Genre name must be specified.')
     .isLength({ min: 3 })
-    .withMessage('Genre name must be at least 3 characters long.')
+    .withMessage('Genre name must be at least 3 characters')
     .escape(),
 
   // procesa peticion despues de la validacion y sanitizacion
