@@ -127,10 +127,67 @@ exports.genre_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display Genre update form on GET.
 exports.genre_update_get = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Genre update GET')
+  const genre = await Genre.findById(req.params.id)
+
+  if (!genre) {
+    const err = new Error('Genre not found')
+    err.status = 404
+    next(err)
+  }
+
+  res.render('genre_form', {
+    title: 'Update Genre',
+    genre: genre,
+  })
 })
 
 // Handle Genre update on POST.
-exports.genre_update_post = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Genre update POST')
-})
+exports.genre_update_post = [
+  // valida y sanitiza el campo "name"
+  body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('Genre name must be specified.')
+    .isLength({ min: 3 })
+    .withMessage('Genre name must be at least 3 characters')
+    .escape(),
+
+  // procesa peticion despues de la validacion y sanitizacion
+  asyncHandler(async (req, res, next) => {
+    // extrae los errores de valicacion de la request
+    const errors = validationResult(req)
+
+    // crea un objeto genre con la data sanitizada
+    const genre = new Genre({ name: req.body.name, _id: req.params.id })
+
+    if (!errors.isEmpty()) {
+      // hay errores. Renderiza la forma con los valores sanitizados
+      // y mensajes de error
+      res.render('genre_form', {
+        title: 'Update Genre',
+        genre: genre,
+        errors: errors.array(),
+      })
+      return
+    } else {
+      // Los datos del formulario son validos.
+      // verifica si un Genre con el mismo nombre existe
+      const genreExists = await Genre.findOne({ name: req.body.name })
+        .collation({ locale: 'en', strength: 2 })
+        .exec()
+
+      if (genreExists) {
+        // si el Genre existe, redirige a su pagina de detalles
+        res.redirect(genreExists.url)
+      } else {
+        const updatedGenre = await Genre.findByIdAndUpdate(
+          req.params.id,
+          genre,
+          {}
+        )
+        // nuevo genero grabado. Redirige a la pagina de detalles
+        res.redirect(updatedGenre.url)
+      }
+    }
+  }),
+]
